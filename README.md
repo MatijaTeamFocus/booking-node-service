@@ -38,3 +38,6 @@ $ npm run test
 
 - Swagger documentation is available at 'src/swagger.yaml'
 
+## Postman collection
+
+- Postman collection is available at 'postman-collection/Booking Node Service.postman_collection.json'
