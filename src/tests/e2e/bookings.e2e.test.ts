@@ -3,15 +3,18 @@ import { describe, expect, test } from "@jest/globals";
 import { AppDataSource } from "../../data-source";
 import { BookingDbPostgresHelper } from "../../utils/postgres-test.util";
 import { WebServer } from "../../WebServer";
+import express from "express";
 import request from "supertest";
 
 let webServer: WebServer;
+let app: express.Express;
 let bookingDbPostgresHelper: BookingDbPostgresHelper;
 
 describe("Testing /bookings routes", () => {
   beforeAll(async () => {
     bookingDbPostgresHelper = new BookingDbPostgresHelper();
     webServer = new WebServer(3000);
+    app = webServer.getApp();
     await AppDataSource.initialize();
   });
 
@@ -32,7 +35,7 @@ describe("Testing /bookings routes", () => {
 
   describe("Testing POST /bookings", () => {
     test("Create booking - Happy case", async () => {
-      const response = await request(webServer.app)
+      const response = await request(app)
         .post("/bookings")
         .set("api-token", "standard-token")
         .send({
@@ -49,7 +52,7 @@ describe("Testing /bookings routes", () => {
     });
 
     test("Create booking - Missing parking spot", async () => {
-      const response = await request(webServer.app)
+      const response = await request(app)
         .post("/bookings")
         .set("api-token", "standard-token")
         .send({
@@ -63,7 +66,7 @@ describe("Testing /bookings routes", () => {
     });
 
     test("Create booking - Existing booking", async () => {
-      const response = await request(webServer.app)
+      const response = await request(app)
         .post("/bookings")
         .set("api-token", "standard-token")
         .send({
@@ -90,7 +93,7 @@ describe("Testing /bookings routes", () => {
   describe("Testing GET /bookings", () => {
     test("Get bookings - Happy case - Standard user - his booking", async () => {
       const getBookingsUrl = `/bookings?id=1000`;
-      const response = await request(webServer.app)
+      const response = await request(app)
         .get(getBookingsUrl)
         .set("api-token", "standard-token");
 
@@ -105,7 +108,7 @@ describe("Testing /bookings routes", () => {
 
     test("Get bookings - Happy case - Admin user - parking spots bookings", async () => {
       const getBookingsUrl = `/bookings?parkingSpotId=1`;
-      const response = await request(webServer.app)
+      const response = await request(app)
         .get(getBookingsUrl)
         .set("api-token", "admin-token");
 
@@ -123,7 +126,7 @@ describe("Testing /bookings routes", () => {
 
     test("Get bookings - Happy case - Standard user - parking spots bookings", async () => {
       const getBookingsUrl = `/bookings?parkingSpotId=1`;
-      const response = await request(webServer.app)
+      const response = await request(app)
         .get(getBookingsUrl)
         .set("api-token", "standard-token");
 
@@ -138,7 +141,7 @@ describe("Testing /bookings routes", () => {
 
     test("Get bookings - Happy case - Standard user - no bookings found", async () => {
       const getBookingsUrl = `/bookings?id=5`;
-      const response = await request(webServer.app)
+      const response = await request(app)
         .get(getBookingsUrl)
         .set("api-token", "standard-token");
 
@@ -151,7 +154,7 @@ describe("Testing /bookings routes", () => {
 
   describe("Testing PATCH /bookings", () => {
     test("Update booking - Happy case - Standard user - his booking", async () => {
-      const response = await request(webServer.app)
+      const response = await request(app)
         .patch("/bookings/1000")
         .set("api-token", "standard-token")
         .send({
@@ -168,7 +171,7 @@ describe("Testing /bookings routes", () => {
     });
 
     test("Update booking - Happy case - Admin user - not his booking", async () => {
-      const response = await request(webServer.app)
+      const response = await request(app)
         .patch("/bookings/1000")
         .set("api-token", "standard-token")
         .send({
@@ -185,7 +188,7 @@ describe("Testing /bookings routes", () => {
     });
 
     test("Update booking - Missing booking", async () => {
-      const response = await request(webServer.app)
+      const response = await request(app)
         .patch("/bookings/1005")
         .set("api-token", "standard-token")
         .send({
@@ -199,7 +202,7 @@ describe("Testing /bookings routes", () => {
     });
 
     test("Update booking - Existing booking", async () => {
-      const response = await request(webServer.app)
+      const response = await request(app)
         .patch("/bookings/1002")
         .set("api-token", "standard-token")
         .send({
@@ -207,23 +210,23 @@ describe("Testing /bookings routes", () => {
           endDateTime: "2024-03-03T10:30:00.000Z",
         });
 
-        expect(response).toBeDefined();
-        expect(response.body.message).toBe("Bad request.");
-        expect(response.body.details.message).toBe(
-          "Booking conflicts with existing booking"
-        );
-        expect(response.body.details.existentBooking).toBeDefined();
-        expect(response.body.details.existentBooking.startDateTime).toBe(
-          "2024-03-03T10:00:00.000Z"
-        );
-        expect(response.body.details.existentBooking.endDateTime).toBe(
-          "2024-03-03T11:00:00.000Z"
-        );
-        expect(response.statusCode).toBe(400);
+      expect(response).toBeDefined();
+      expect(response.body.message).toBe("Bad request.");
+      expect(response.body.details.message).toBe(
+        "Booking conflicts with existing booking"
+      );
+      expect(response.body.details.existentBooking).toBeDefined();
+      expect(response.body.details.existentBooking.startDateTime).toBe(
+        "2024-03-03T10:00:00.000Z"
+      );
+      expect(response.body.details.existentBooking.endDateTime).toBe(
+        "2024-03-03T11:00:00.000Z"
+      );
+      expect(response.statusCode).toBe(400);
     });
 
     test("Update booking - Start date time cannot be greater than end date time", async () => {
-      const response = await request(webServer.app)
+      const response = await request(app)
         .patch("/bookings/1003")
         .set("api-token", "standard-token")
         .send({
@@ -231,14 +234,16 @@ describe("Testing /bookings routes", () => {
         });
 
       expect(response).toBeDefined();
-      expect(response.body.message).toBe("Start date time cannot be greater than end date time");
+      expect(response.body.message).toBe(
+        "Start date time cannot be greater than end date time"
+      );
       expect(response.statusCode).toBe(400);
     });
   });
 
   describe("Testing DELETE /bookings", () => {
     test("Delete booking - Happy case - Standard user - his booking", async () => {
-      const response = await request(webServer.app)
+      const response = await request(app)
         .delete("/bookings/1000")
         .set("api-token", "standard-token");
 
@@ -249,7 +254,7 @@ describe("Testing /bookings routes", () => {
     });
 
     test("Delete booking - Happy case - Admin user - not his booking", async () => {
-      const response = await request(webServer.app)
+      const response = await request(app)
         .delete("/bookings/1002")
         .set("api-token", "admin-token");
 
@@ -260,7 +265,7 @@ describe("Testing /bookings routes", () => {
     });
 
     test("Delete booking - Missing booking", async () => {
-      const response = await request(webServer.app)
+      const response = await request(app)
         .delete("/bookings/1005")
         .set("api-token", "standard-token");
 

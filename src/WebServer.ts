@@ -3,17 +3,21 @@ import { errorHandler } from "./middlewares/error.middleware";
 import express from "express";
 
 export class WebServer {
-  public app = express();
+  private app = express();
   private server: any | null;
 
   constructor(private port: number) {
     this.server = null;
-    this.useMiddleware(); // do this before hooking up endpoints, or it wont work
+    this.useMiddleware();
     this.hookupEndpoints();
   }
 
   public listen() {
     this.server = this.app.listen(this.port, this.printBootMessage.bind(this));
+  }
+
+  public getApp(): express.Express {
+    return this.app;
   }
 
   private printBootMessage() {
