@@ -11,7 +11,7 @@ Node.js backend service for managing parking spot bookings. The service provides
 ```bash
 $ npm i
 ```
-- Set up your database and configure the connection in ormconfig.json.
+- Set up your database and configure the connection in 'src/data-source.ts'.
 
 ## Running up the service
 
