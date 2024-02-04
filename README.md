@@ -32,7 +32,7 @@ $ npm run start
 
 ```bash
 $ make prepare-test
-$ npm run test
+$ make run-test
 ```
 ## API Documentation
 

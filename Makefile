@@ -3,3 +3,6 @@ prepare-test:
 
 kill-test: 
 	docker-compose -f docker-compose.test.yml stop && docker-compose -f docker-compose.test.yml down
+
+run-test:
+	npm run test
