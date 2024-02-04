@@ -5,6 +5,10 @@ Node.js backend service for managing parking spot bookings. The service provides
 
 - Matija Milekic (matija.milekic@outlook.com)
 
+## Tech task
+
+- Tech task is available at 'task/Tech challenge.pdf'
+
 ## Setting up
 
 - Install dependencies
