@@ -9,13 +9,17 @@ let webServer: WebServer | undefined;
 async function main() {
   try {
     await AppDataSource.initialize();
-    console.log("🤖⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️ | Server connected to the database");
+    console.log(
+      "🤖⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️ | Server connected to the database"
+    );
 
     webServer = new WebServer(3000);
     webServer.listen();
   } catch (error) {
-    console.log("🤖⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️ | Service crashed -> restarting ............");
-    console.log(error);
+    console.log(
+      "🤖⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️ | Service crashed -> restarting ............",
+      { error }
+    );
     if (webServer) {
       await webServer.shutdown();
     }
@@ -25,5 +29,8 @@ async function main() {
 }
 
 main().catch((error: any) => {
-  console.error("🤖⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️ | Server crashed", error);
+  console.error(
+    "🤖⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️ | Server crashed",
+    error
+  );
 });

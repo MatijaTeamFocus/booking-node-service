@@ -1,3 +1,5 @@
+require("dotenv").config({ path: "./.testenv" });
+
 module.exports = {
     roots: ["./src"],
     // transform: {

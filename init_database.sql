@@ -1,3 +1,3 @@
 CREATE USER postgres;
-CREATE DATABASE booking_db;
-GRANT ALL PRIVILEGES ON DATABASE booking_db TO postgres;
+CREATE DATABASE test_booking_db;
+GRANT ALL PRIVILEGES ON DATABASE test_booking_db TO postgres;

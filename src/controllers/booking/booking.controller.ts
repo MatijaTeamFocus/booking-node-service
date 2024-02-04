@@ -71,7 +71,6 @@ class BookingController extends BaseController {
         endDateTime: savedBooking.endDateTime,
       });
     } catch (error) {
-      console.error(error);
       return super.handleErrorResponse(res, error);
     }
   }
@@ -139,7 +138,6 @@ class BookingController extends BaseController {
 
       return res.status(200).send({ bookings });
     } catch (error) {
-      console.error(error);
       return super.handleErrorResponse(res, error);
     }
   }
@@ -216,7 +214,6 @@ class BookingController extends BaseController {
         endDateTime: booking.endDateTime,
       });
     } catch (error) {
-      console.error(error);
       return super.handleErrorResponse(res, error);
     }
   }
@@ -236,7 +233,6 @@ class BookingController extends BaseController {
 
       return res.status(200).send({ message: "Booking deleted successfully" });
     } catch (error) {
-      console.error(error);
       return super.handleErrorResponse(res, error);
     }
   }

@@ -21,7 +21,7 @@ $ npm i
 
 - Run a PostgreSQL container
 ```bash
-$ docker run --name postgres-local -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
+$ docker run --name postgres-local -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=booking_db -d postgres
 ```
 - Run the service
 ```bash

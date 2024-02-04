@@ -21,7 +21,6 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     req.body.user = user;
     next();
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
