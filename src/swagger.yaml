@@ -1,0 +1,220 @@
+openapi: 3.0.0
+info:
+  title: Booking Node Service
+  version: 1.0.0
+  description: API documentation for the Booking Node Service
+  contact:
+    name: Matija Milekic
+    url: https://www.linkedin.com/in/matija-milekic/
+
+paths:
+  /bookings:
+    get:
+      summary: Get bookings
+      description: Get a list of bookings based on query parameters.
+      parameters:
+        - in: header
+          name: api-token
+          schema:
+            type: string
+          required: true
+          example: 'standard-token'
+        - name: id
+          in: query
+          description: Booking ID
+          schema:
+            type: number
+        - name: startDateTimeFrom
+          in: query
+          description: Start date time range (from)
+          schema:
+            type: string
+            format: date-time
+        - name: startDateTimeTo
+          in: query
+          description: Start date time range (to)
+          schema:
+            type: string
+            format: date-time
+        - name: endDateTimeFrom
+          in: query
+          description: End date time range (from)
+          schema:
+            type: string
+            format: date-time
+        - name: endDateTimeTo
+          in: query
+          description: End date time range (to)
+          schema:
+            type: string
+            format: date-time
+        - name: parkingSpotId
+          in: query
+          description: Parking spot ID
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                bookings:
+                  - id: 1
+                    startDateTime: '2024-02-01T10:00:00Z'
+                    endDateTime: '2024-02-01T12:00:00Z'
+                    parkingSpotId: 123
+                    createdByUserId: 456
+                    createdAt: '2024-02-01T09:30:00Z'
+                    updatedAt: '2024-02-01T09:30:00Z'
+                  - id: 2
+                    startDateTime: '2024-02-02T14:00:00Z'
+                    endDateTime: '2024-02-02T16:00:00Z'
+                    parkingSpotId: 789
+                    createdByUserId: 456
+                    createdAt: '2024-02-02T13:30:00Z'
+                    updatedAt: '2024-02-02T13:30:00Z'
+    post:
+      summary: Create a booking
+      description: Create a new booking.
+      parameters:
+        - in: header
+          name: api-token
+          schema:
+            type: string
+          required: true
+          example: 'standard-token'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startDateTime:
+                  type: string
+                  format: date-time
+                  description: Start date and time (required)
+                endDateTime:
+                  type: string
+                  format: date-time
+                  description: End date and time (optional)
+                parkingSpotId:
+                  type: integer
+                  description: Parking spot ID (required)
+              required:
+                - startDateTime
+                - endDateTime
+                - parkingSpotId
+            example:
+              startDateTime: '2024-02-03T08:00:00Z'
+              endDateTime: '2024-02-03T10:00:00Z'
+              parkingSpotId: 123
+              createdByUserId: 456
+      responses:
+        '201':
+          description: Booking created successfully
+          content:
+            application/json:
+              example:
+                id: 3
+                startDateTime: '2024-02-03T08:00:00Z'
+                endDateTime: '2024-02-03T10:00:00Z'
+                parkingSpotId: 123
+                createdByUserId: 456
+                createdAt: '2024-02-03T07:30:00Z'
+                updatedAt: '2024-02-03T07:30:00Z'
+
+  /bookings/{id}:
+    patch:
+      summary: Update booking by ID
+      description: Update details of a specific booking.
+      parameters:
+        - in: header
+          name: api-token
+          schema:
+            type: string
+          required: true
+          example: 'standard-token'
+        - name: id
+          in: path
+          description: Booking ID
+          required: true
+          schema:
+            type: number
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startDateTime:
+                  type: string
+                  format: date-time
+                  description: Start date and time (optional)
+                endDateTime:
+                  type: string
+                  format: date-time
+                  description: End date and time (optional)
+            example:
+              startDateTime: '2024-02-01T11:00:00Z'
+      responses:
+        '200':
+          description: Booking updated successfully
+          content:
+            application/json:
+              example:
+                id: 1
+                startDateTime: '2024-02-01T11:00:00Z'
+                endDateTime: '2024-02-01T13:00:00Z'
+                parkingSpotId: 123
+                createdByUserId: 456
+                createdAt: '2024-02-01T09:30:00Z'
+                updatedAt: '2024-02-01T10:30:00Z'
+        '404':
+          description: Booking not found
+
+    delete:
+      summary: Delete booking by ID
+      description: Delete a specific booking.
+      parameters:
+        - in: header
+          name: api-token
+          schema:
+            type: string
+          required: true
+          example: 'standard-token'
+        - name: id
+          in: path
+          description: Booking ID
+          required: true
+          schema:
+            type: number
+      responses:
+        '204':
+          description: Booking deleted successfully
+        '404':
+          description: Booking not found
+
+components:
+  schemas:
+    Booking:
+      type: object
+      properties:
+        id:
+          type: integer
+        startDateTime:
+          type: string
+          format: date-time
+        endDateTime:
+          type: string
+          format: date-time
+        parkingSpotId:
+          type: integer
+        createdByUserId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time

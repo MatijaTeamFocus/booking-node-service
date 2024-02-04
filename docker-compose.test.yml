@@ -1,0 +1,17 @@
+version: "1"
+services:
+  postgres_test:
+    build:
+      dockerfile: postgres.Dockerfile
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - tests
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=booking_db
+networks:
+  tests:
+    name: tests

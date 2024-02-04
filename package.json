@@ -1,0 +1,39 @@
+{
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "build": "tsc",
+    "test": "jest",
+    "test-unit": "ts-mocha --require tsconfig-paths/register 'src/tests/unit/*.test.ts'",
+    "test-e2e": "mocha --require ts-node/register src/tests/e2e/*.test.ts"
+  },
+  "name": "booking-node-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.15",
+    "@types/pg": "^8.11.0",
+    "@types/supertest": "^6.0.2",
+    "express": "^4.18.2",
+    "pg": "^8.11.3",
+    "reflect-metadata": "^0.2.1",
+    "supertest": "^6.3.4",
+    "typeorm": "^0.3.20"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
+    "@babel/preset-typescript": "^7.23.3",
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "joi": "^17.12.1",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.3.3"
+  }
+}
