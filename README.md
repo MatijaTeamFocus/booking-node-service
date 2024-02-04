@@ -7,12 +7,19 @@ Node.js backend service for managing parking spot bookings. The service provides
 
 ## Setting up
 
+- Install dependencies
 ```bash
 $ npm i
 ```
+- Set up your database and configure the connection in ormconfig.json.
 
 ## Running up the service
 
+- Run a PostgreSQL container
+```bash
+$ docker run --name postgres-local -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
+```
+- Run the service
 ```bash
 $ npm run start
 ```
@@ -23,4 +30,7 @@ $ npm run start
 $ make prepare-test
 $ npm run test
 ```
+## API Documentation
+
+- Swagger documentation is available at 'src/swagger.yaml'
 
