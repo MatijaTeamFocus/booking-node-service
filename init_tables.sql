@@ -8,7 +8,7 @@ CREATE TABLE public.booking (
 	parking_spot_id int4 NOT NULL,
 	created_at timestamp NOT NULL DEFAULT now(),
 	updated_at timestamp NOT NULL DEFAULT now(),
-	CONSTRAINT "PK_49171efc69702ed84c812f33540" PRIMARY KEY (id)
+	CONSTRAINT "pk_booking" PRIMARY KEY (id)
 );
 
 -- public.parking_spot definition
@@ -16,7 +16,7 @@ CREATE TABLE public.booking (
 CREATE TABLE public.parking_spot (
 	id serial4 NOT NULL,
 	"name" varchar NOT NULL,
-	CONSTRAINT "PK_15bcb502057157741cff7a11ece" PRIMARY KEY (id)
+	CONSTRAINT "pk_parking_spot" PRIMARY KEY (id)
 );
 
 -- public."user" definition
@@ -32,10 +32,10 @@ CREATE TABLE public."user" (
 	"role" public."user_role_enum" NOT NULL DEFAULT 'Standard'::user_role_enum,
 	first_name varchar NOT NULL,
 	last_name varchar NOT NULL,
-	CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY (id)
+	CONSTRAINT "pk_user" PRIMARY KEY (id)
 );
 
 -- public.booking foreign keys
 
-ALTER TABLE public.booking ADD CONSTRAINT "FK_7547201d43f066d5dbf6d29eec0" FOREIGN KEY (parking_spot_id) REFERENCES public.parking_spot(id);
-ALTER TABLE public.booking ADD CONSTRAINT "FK_fd140387142dbe12ab5f7d6be8e" FOREIGN KEY (created_by_user_id) REFERENCES public."user"(id);
+ALTER TABLE public.booking ADD CONSTRAINT "fk_booking_parking_spot" FOREIGN KEY (parking_spot_id) REFERENCES public.parking_spot(id);
+ALTER TABLE public.booking ADD CONSTRAINT "fk_booking_created_by_user" FOREIGN KEY (created_by_user_id) REFERENCES public."user"(id);

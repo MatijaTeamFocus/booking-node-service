@@ -19,7 +19,6 @@ class BookingController extends BaseController {
       const { startDateTime, endDateTime, parkingSpotId, user } =
         new CreateBookingRequest(req);
 
-      const bookingRepository = AppDataSource.getRepository(Booking);
       const parkingSpotRepository = AppDataSource.getRepository(ParkingSpot);
 
       // Check if the parking spot exists
@@ -56,20 +55,16 @@ class BookingController extends BaseController {
       }
 
       // Validation passed, proceed with creating and saving the booking
-      const newBooking = bookingRepository.create({
+      const newBooking = BookingRepository.create({
         startDateTime,
         endDateTime,
         createdByUser: user,
         parkingSpot,
       });
 
-      const savedBooking = await bookingRepository.save(newBooking);
+      const savedBooking = await BookingRepository.save(newBooking);
 
-      return res.status(200).send({
-        id: savedBooking.id,
-        startDateTime: savedBooking.startDateTime,
-        endDateTime: savedBooking.endDateTime,
-      });
+      return res.status(200).send(savedBooking.toResponse());
     } catch (error) {
       return super.handleErrorResponse(res, error);
     }
@@ -78,65 +73,16 @@ class BookingController extends BaseController {
   async getBookings(req: Request, res: Response): Promise<Response> {
     try {
       // Extract parameters
-      const {
-        id,
-        startDateTimeFrom,
-        startDateTimeTo,
-        endDateTimeFrom,
-        endDateTimeTo,
-        parkingSpotId,
-        page,
-        pageSize,
-        sortBy,
-        sortOrder,
-        user,
-      } = new GetBookingsRequest(req);
+      const getBookingsRequest = new GetBookingsRequest(req);
 
-      const bookingRepository = AppDataSource.getRepository(Booking);
-      // Build the query based on the provided parameters
-      const queryBuilder = bookingRepository.createQueryBuilder("booking");
-      if (id) {
-        queryBuilder.andWhere("booking.id = :id", { id });
-      }
-      if (startDateTimeFrom && startDateTimeTo) {
-        queryBuilder.andWhere(
-          "booking.start_date_time BETWEEN :startDateTimeFrom AND :startDateTimeTo",
-          {
-            startDateTimeFrom,
-            startDateTimeTo,
-          }
-        );
-      }
-      if (endDateTimeFrom && endDateTimeTo) {
-        queryBuilder.andWhere(
-          "booking.end_date_time BETWEEN :endDateTimeFrom AND :endDateTimeTo",
-          {
-            endDateTimeFrom,
-            endDateTimeTo,
-          }
-        );
-      }
-      if (parkingSpotId) {
-        queryBuilder.andWhere("booking.parkingSpotId = :parkingSpotId", {
-          parkingSpotId,
-        });
-      }
-      if (user.role === "Standard") {
-        queryBuilder.andWhere("booking.created_by_user_id = :userId", {
-          userId: user.id,
-        });
-      }
+      // Get bookings
+      const bookings = await BookingRepository.getBookings(getBookingsRequest);
 
-      // Apply sorting
-      queryBuilder.orderBy(`booking.${sortBy}`, sortOrder);
-
-      // Apply pagination
-      queryBuilder.skip((page - 1) * pageSize).take(pageSize);
-
-      // Find bookings based on the query
-      const bookings = await queryBuilder.getMany();
-
-      return res.status(200).send({ bookings });
+      return res.status(200).send({
+        bookings: bookings.map((booking: Booking) => {
+          return booking.toResponse();
+        }),
+      });
     } catch (error) {
       return super.handleErrorResponse(res, error);
     }
@@ -155,23 +101,25 @@ class BookingController extends BaseController {
       }
 
       let checkForExistentBooking = false;
-      const updateQuery: any = {};
+      const updateQuery: { startDateTime?: Date; endDateTime?: Date } = {};
       if (startDateTime) {
         if (new Date(startDateTime) < new Date(booking.startDateTime)) {
           checkForExistentBooking = true;
         }
-        updateQuery["startDateTime"] = startDateTime;
+        updateQuery.startDateTime = startDateTime;
         booking.startDateTime = new Date(startDateTime);
       }
       if (endDateTime) {
         if (new Date(endDateTime) > new Date(booking.endDateTime)) {
           checkForExistentBooking = true;
         }
-        updateQuery["endDateTime"] = endDateTime;
+        updateQuery.endDateTime = endDateTime;
         booking.endDateTime = new Date(endDateTime);
       }
       if (new Date(booking.startDateTime) > new Date(booking.endDateTime)) {
-        throw BAD_REQUEST.withMessage("Start date time cannot be greater than end date time");
+        throw BAD_REQUEST.withMessage(
+          "Start date time cannot be greater than end date time"
+        );
       }
 
       if (checkForExistentBooking) {
@@ -199,20 +147,9 @@ class BookingController extends BaseController {
         }
       }
 
-      const bookingRepository = AppDataSource.getRepository(Booking);
-      const updateQueryBuilder =
-        bookingRepository.createQueryBuilder("booking");
-      await updateQueryBuilder
-        .update()
-        .set(updateQuery)
-        .where("booking.id = :id", { id })
-        .execute();
+      await BookingRepository.updateBookingTime(id, updateQuery);
 
-      return res.status(200).send({
-        id: booking.id,
-        startDateTime: booking.startDateTime,
-        endDateTime: booking.endDateTime,
-      });
+      return res.status(200).send(booking.toResponse());
     } catch (error) {
       return super.handleErrorResponse(res, error);
     }
@@ -228,8 +165,7 @@ class BookingController extends BaseController {
         throw NOT_FOUND.withMessage("Booking not found");
       }
 
-      const bookingRepository = AppDataSource.getRepository(Booking);
-      await bookingRepository.delete(id);
+      await BookingRepository.delete(id);
 
       return res.status(200).send({ message: "Booking deleted successfully" });
     } catch (error) {

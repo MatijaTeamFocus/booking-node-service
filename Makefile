@@ -6,3 +6,6 @@ kill-test:
 
 run-test:
 	npm run test
+
+run-local:
+	npm run start

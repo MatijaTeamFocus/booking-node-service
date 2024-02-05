@@ -25,7 +25,7 @@ $ docker run --name postgres-local -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e
 ```
 - Run the service
 ```bash
-$ npm run start
+$ make run-local
 ```
 
 ## Testing the service

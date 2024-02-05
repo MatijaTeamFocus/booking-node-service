@@ -56,4 +56,14 @@ export class Booking {
     type: "timestamp",
   })
   updatedAt: Date;
+
+  toResponse() {
+    return {
+      id: this.id,
+      startDateTime: this.startDateTime,
+      endDateTime: this.endDateTime,
+      parkingSpotId: this.parkingSpotId,
+      createdByUserId: this.createdByUserId,
+    };
+  }
 }

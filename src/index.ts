@@ -5,6 +5,7 @@ import { WebServer } from "./WebServer";
 import { sleep } from "./utils/helpers.util";
 
 let webServer: WebServer | undefined;
+let retry: number = 5;
 
 async function main() {
   try {
@@ -18,13 +19,16 @@ async function main() {
   } catch (error) {
     console.log(
       "🤖⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️⚡️ | Service crashed -> restarting ............",
-      { error }
+      { retry, error }
     );
     if (webServer) {
       await webServer.shutdown();
     }
-    await sleep(5000);
-    await main();
+    if (retry > 0) {
+      retry--;
+      await sleep(5000);
+      await main();  
+    }
   }
 }
 
